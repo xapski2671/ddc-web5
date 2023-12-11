@@ -1,3 +1,10 @@
 {
-  "extends": "next/core-web-vitals"
+	"extends": "next/core-web-vitals",
+	"rules": {
+		"no-console": "off",
+		"react-hooks/exhaustive-deps": "off",
+		"space-infix-ops": ["warn", { "int32Hint": false }],
+		"@typescript-eslint/no-explicit-any": ["off"],
+		"@next/next/no-img-element": ["off"]
+	}
 }

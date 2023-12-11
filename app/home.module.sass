@@ -1,0 +1,223 @@
+@import @/styles/_mixins
+
+.home
+  width: 100%
+  height: 100vh
+  overflow: scroll
+  @include fl-cc
+  @include fl-c
+
+.form
+  @include fl-tl
+  @include fl-c
+  width: 70%
+  max-height: 80vh
+  overflow: scroll
+  padding: 1.8rem
+  background: #f1f1f1
+  box-shadow: 0px 4px 23px 4px rgba(20,111,106, 0.1)
+  // border-radius: 0.44em
+  gap: 1rem
+
+  // &:focus-within
+  //   border: 2px solid #0e4e4b
+  @media(max-width: 800px)
+    padding: 1.5rem
+    gap: 1.2rem
+
+.heading
+  width: 100%
+  margin-bottom: 1rem
+  h3
+    margin-bottom: 0.5rem
+
+.sep
+  height: 1px
+  width: 100%
+  background: #26d3ca
+
+.input_grp
+  @include fl-tl
+  @include fl-c
+  gap: 0.5rem
+  width: 100%
+  label
+    font-size: 0.875rem
+
+.input
+  width: 100%
+  border: none
+  border-bottom: 1px solid #26d3ca
+  padding: 0.75em
+  font-family: $font-text
+  font-size: 0.875rem
+  font-weight: 600
+  background: #b8f2ef
+  color: #0e4e4b
+  outline: none
+
+.input_no
+  @extend .input
+  width: 40%
+
+.img_inpt_grp
+  width: 100%
+  p
+    font-size: 0.875rem
+    margin-bottom: 0.5rem
+
+.img_upl_wrp
+  // border: 1px solid #000
+  width: 100%
+  // height: 60px
+
+.pc_img_lbl
+  // border: 2px solid salmon
+  width: 100%
+  // height: 20px
+  cursor: pointer
+  // background: pink
+  // width: 50%
+  // height: 100%
+  // aspect-ratio: 1/0.5
+
+.pc_img_wrp
+  width: 50%
+  aspect-ratio: 16/9
+      // height: 15px
+  background: rgba(20,111,106,0.1 )
+  @include fl-cc
+  &:hover
+    transition: all 0.5s ease
+    opacity: 0.8
+
+.pc_img
+  width: 100%
+  height: 100%
+  object-fit: cover
+
+.upl_icon
+  width: 2rem
+  height: 2rem
+  opacity: 0.8
+
+.tier_adder
+  width: 100%
+  @include fl-cl
+  @include fl-c
+  gap: 0.5rem
+  p
+    font-size: 0.875rem
+
+.tier_adder_btn
+  width: 100%
+  @include fl-cc
+  padding: 0.5rem
+  background: rgba(35,195,186,0.2)
+  cursor: pointer
+  &:hover
+    transition: all 0.5s ease
+    opacity: 0.8
+
+.add_icon
+  width: 2rem
+  height: 2rem
+  opacity: 0.8
+  cursor: pointer
+  &:hover
+    transition: all 0.5s ease
+    opacity: 0.8
+
+.tier_form
+  width: 100%
+  border: 1px solid #54e0d9
+  // border-radius: 8px
+  box-shadow: 0px 4px 15px 4px rgba(20,111,106, 0.1)
+  padding: 1rem
+  @include fl-tl
+  @include fl-c
+  gap: 1rem
+
+.input_for_list
+  width: 100%
+  @include fl-cl
+  gap: 1rem
+  input
+    width: 70%
+
+.viewer_list
+  width: 100%
+  padding: 0 1rem
+  max-height: 200px
+  overflow: scroll
+
+.viewer_grp
+  @include fl-cl
+  gap: 0.5rem
+  margin-bottom: 0.5rem
+
+.viewer
+  font-size: 0.825rem
+
+.x_for_list
+  width: 1.2rem
+  height: 1.2rem
+  stroke-width: 2
+  cursor: pointer
+  &:hover
+    transition: all 0.5s ease
+    opacity: 0.8
+
+.add_tier_btn
+  width: 100%
+  @include fl-cr
+  div
+    background: #0e4e4b
+    color: #fff
+    font-size: 0.875rem
+    padding: 0.6em 1.2em
+    cursor: pointer
+    &:hover
+      transition: all 0.5s ease
+      opacity: 0.8
+
+.tiers
+  width: 100%
+  @include fl-tl
+  @include fl-c
+  gap: 1rem
+
+.tier_wrp
+  @include fl-tl
+  gap: 0.5rem
+  width: 100%
+
+.tier
+  padding: 0.5rem
+  width: 60%
+  background: #54e0d9
+  color: #0e4e4b
+  @include fl-tl
+  @include fl-c
+  gap: 0.5rem
+  font-size: 0.75rem
+
+.a_viewers
+  width: 100%
+  padding: 0 1rem
+  li
+    margin-bottom: 0.5rem
+
+.submit_btn
+  margin-top: 2rem
+  background: #0e4e4b
+  color: #fff
+  font-size: 0.875rem
+  outline: none
+  border: none
+  font-family: $font-text
+  padding: 0.6em 1.2em
+  cursor: pointer
+  &:hover
+    transition: all 0.5s ease
+    opacity: 0.8

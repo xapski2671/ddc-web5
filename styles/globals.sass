@@ -1,0 +1,34 @@
+@import ./_index
+@import ./_mixins
+
+*
+  box-sizing: border-box
+  padding: 0
+  margin: 0
+  scroll-behavior: smooth
+
+html::before
+  content: ""
+  position: absolute
+  bottom: 0
+  left: 0
+  height: 70vh
+  width: 100%
+  background: linear-gradient(0deg, rgba(80, 165, 132, 0.1) 0%, rgba(80, 165, 132, 0) 100%)
+  z-index: -1
+
+// :root
+//   --brand-color: #50A584
+//   --brand-color-rgb: 80, 165, 132
+
+html,
+body
+  font-family: "Montserrat", sans-serif
+  font-weight: normal
+  font-size: 16px
+  color: #146f6a
+  background-color: #eeeeee
+  background-attachment: scroll
+  overflow-x: hidden
+  margin: 0
+  min-height: 100vh

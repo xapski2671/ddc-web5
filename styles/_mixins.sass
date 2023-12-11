@@ -1,0 +1,96 @@
+$font-text: 'Montserrat', sans-serif
+$font-subhead: "Monument-regular", sans-serif
+$font-head: "Monument-ultra", sans-serif
+
+@mixin fl-tl
+  display: flex
+  align-items: flex-start
+  justify-content: flex-start
+
+/* top-center */
+@mixin fl-tc
+  display: flex
+  align-items: flex-start
+  justify-content: center
+
+/* top-right */
+@mixin fl-tr
+  display: flex
+  align-items: flex-start
+  justify-content: flex-end
+
+/* center-left */
+@mixin fl-cl
+  display: flex
+  align-items: center
+  justify-content: flex-start
+
+/* center-center */
+@mixin fl-cc
+  display: flex
+  align-items: center
+  justify-content: center
+
+/* center-right */
+@mixin fl-cr
+  display: flex
+  align-items: center
+  justify-content: flex-end
+
+@mixin fl-bl
+  display: flex
+  align-items: flex-end
+  justify-content: flex-start
+
+@mixin fl-bc
+  display: flex
+  align-items: flex-end
+  justify-content: center
+
+@mixin fl-br
+  display: flex
+  align-items: flex-end
+  justify-content: flex-end
+
+/* space-between */
+@mixin fl-sb
+  justify-content: space-between
+
+@mixin fl-sa
+  justify-content: space-around
+
+@mixin fl-c
+  flex-direction: column
+
+@mixin no-select
+  -webkit-user-select: none
+  -ms-user-select: none
+  user-select: none
+
+@mixin def-p
+  font-family: $font-text
+  font-weight: 400
+  font-size: 1.5rem
+  line-height: 1em
+  color: $color-text
+
+@mixin def-faicon
+  height: 2rem
+  color: $color-text
+
+@mixin def-btn
+  @include fl-cl
+  gap: 0.8rem
+  outline: none
+  border: 1px solid $color-text
+  border-radius: 0.25em
+  background: $color-sub-bg
+  font-family: $font-text
+  font-weight: 600
+  font-size: 1.6rem
+  line-height: 1em
+  padding: 0.4em 0.7em
+  color: $color-ltext
+  cursor: pointer
+  &:hover
+    opacity: 0.8
