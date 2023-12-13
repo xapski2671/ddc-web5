@@ -1,14 +1,11 @@
 "use client"
 import { useState } from "react"
-import { Web5 } from "@web5/api"
-// import { webcrypto } from "node:crypto"
 import s from "./home.module.sass"
 import { cutStr } from "@/utils/cutStr"
 import { tier } from "@/types"
 import axios from "axios"
-
-// @ts-ignore
-// if (!globalThis.crypto) globalThis.crypto  n= webcrypto
+import { useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
 
 export default function Home() {
 	const [pCover, setPCover] = useState<any>()
@@ -24,6 +21,11 @@ export default function Home() {
 	const [currAViewer, setCurrAViewer] = useState("")
 	const [CAViewers, setCAViewers] = useState<string[]>([])
 	const [submitted, setSubmitted] = useState(false)
+	// const router = useRouter()
+	const usp = useSearchParams()
+	const usn = usp.get("usn")
+	// router.
+	// const { query } = router
 
 	async function toBase64(file: any) {
 		return new Promise((resolve, reject) => {
@@ -82,7 +84,7 @@ export default function Home() {
 
 	async function handleSubmit() {
 		const grandProject = {
-			username: UserName,
+			username: usn,
 			projectName: PName,
 			projectImage: pImg,
 			projectTagL: PTagL,
@@ -92,7 +94,7 @@ export default function Home() {
 
 		// console.log(grandProject)
 		const res = await axios.post(
-			"http://localhost:5001/data",
+			"http://51.20.130.26:5001/data",
 			JSON.stringify(grandProject),
 			{
 				headers: {
@@ -106,7 +108,9 @@ export default function Home() {
 
 	return (
 		<div className={s.home}>
-			<h1 className={s.i_heading}>digital dream creators</h1>
+			<Link href={"/"}>
+				<h1 className={s.i_heading}>digital dream creators</h1>
+			</Link>
 			<form
 				className={s.form}
 				onSubmit={(e) => {
@@ -122,6 +126,7 @@ export default function Home() {
 				<div className={s.input_grp}>
 					<label htmlFor="u_did">Username</label>
 					<input
+						disabled={true}
 						name={"u_did"}
 						type="text"
 						className={s.input}
@@ -129,7 +134,7 @@ export default function Home() {
 						onChange={(e) => {
 							setUserName(e.target.value)
 						}}
-						value={UserName}
+						value={usn ? usn : ""}
 					/>
 				</div>
 
