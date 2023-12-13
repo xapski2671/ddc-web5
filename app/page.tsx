@@ -1,395 +1,191 @@
 "use client"
 import { useState } from "react"
-import { Web5 } from "@web5/api"
-// import { webcrypto } from "node:crypto"
-import s from "./home.module.sass"
-import { cutStr } from "@/utils/cutStr"
-import { tier } from "@/types"
+import s from "./sign_in.module.sass"
 import axios from "axios"
 
-// @ts-ignore
-// if (!globalThis.crypto) globalThis.crypto  n= webcrypto
-
-export default function Home() {
-	const [pCover, setPCover] = useState<any>()
-	const [pImg, setPImg] = useState("")
-	const [arts, setArts] = useState<any>()
+export default function SignIn() {
+	const [UserName, setUserName] = useState("")
 	const [UserDID, setUserDID] = useState("")
-	const [PName, setPName] = useState("")
-	const [PTagL, setPTagL] = useState("")
-	const [AQty, setAQty] = useState("")
-	const [tierAdder, setTierAdder] = useState(false)
-	const [tiers, setTiers] = useState<tier[]>([])
-	const [currTierName, setCurrTierName] = useState("")
-	const [currAViewer, setCurrAViewer] = useState("")
-	const [CAViewers, setCAViewers] = useState<string[]>([])
+	const [LSUserDID, setLSUserDID] = useState("")
+	const [signable, setSignable] = useState(true)
+	const [signed, setSigned] = useState(false)
+	const [didCopied, setDidCopied] = useState(false)
+	const [signUpState, setSignUpState] = useState(true)
 
-	async function toBase64(file: any) {
-		return new Promise((resolve, reject) => {
-			const reader = new FileReader()
-			reader.readAsDataURL(file)
-			reader.onload = () => resolve(reader.result)
-			reader.onerror = reject
-		})
-	}
-
-	async function handleImgChange(e: any) {
-		// console.log(e.target.files)
-		const iimg = await toBase64(e.target.files[0])
-		setPCover(URL.createObjectURL(e.target.files[0]))
-		typeof iimg == "string" && setPImg(iimg)
-	}
-
-	function modArr() {
-		const uniqueArr: string[] = [...new Set(CAViewers)]
-		return uniqueArr
-	}
-
-	async function addTier() {
-		const artsToGo: string[] = []
-
-		// function dataUrlToFile(dataUrl: any, filename: string): File | undefined {
-		// 	const arr = dataUrl.split(",")
-		// 	if (arr.length < 2) {
-		// 		return undefined
-		// 	}
-		// 	const mimeArr = arr[0].match(/:(.*?);/)
-		// 	if (!mimeArr || mimeArr.length < 2) {
-		// 		return undefined
-		// 	}
-		// 	const mime = mimeArr[1]
-		// 	const buff = Buffer.from(arr[1], "base64")
-		// 	return new File([buff], filename, { type: mime })
-		// }
-
-		for (let art of arts) {
-			let aobj = await toBase64(art)
-			typeof aobj == "string" && artsToGo.push(aobj)
+	async function handleSignIn() {
+		const query = {
+			username: UserName,
+			did: UserDID,
 		}
 
-		const tier: tier = {
-			name: currTierName,
-			aViewers: CAViewers,
-			artWorks: artsToGo,
-			projectName: PName,
-			projectImage: pImg,
-			projectCreatorDID: UserDID,
-		}
-
-		setTiers((prev) => [...prev, tier])
-	}
-
-	async function handleSubmit() {
-		const grandProject = {
-			userDID: UserDID,
-			projectName: PName,
-			projectImage: pImg,
-			projectTagL: PTagL,
-			artQuantity: AQty,
-			tiers: tiers,
-		}
-
-		console.log(grandProject)
 		const res = await axios.post(
-			"http://localhost:5001/data",
-			JSON.stringify(grandProject),
+			"http://51.20.130.26:5001/web5/signable",
+			JSON.stringify(query),
 			{
 				headers: {
 					"Content-Type": "application/json",
 				},
 			}
 		)
-		// const res = await axios.post(
-		// 	"http://localhost:5001/data",
-		// 	tiers[0].artWorks
-		// )
-		console.log(tiers[0].artWorks)
 		console.log(res)
+
+		if (res.data.success) {
+			setSignable(true)
+			const ressu = await axios.post(
+				"http://51.20.130.26:5001/web5/sign-user",
+				JSON.stringify(query),
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			)
+			console.log(ressu)
+			ressu.data.status == 200 ? setSigned(true) : setSigned(false)
+			ressu.data.status == 200
+				? setUserDID(ressu.data.message.did)
+				: setUserDID("")
+		} else {
+			setSignable(false)
+		}
+	}
+
+	async function handleLogin() {
+		const query = {
+			username: UserName,
+			did: LSUserDID,
+		}
+
+		const ressu = await axios.post(
+			"http://localhost:5001/web5/login",
+			JSON.stringify(query),
+			{
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		)
+		console.log(ressu)
+	}
+
+	async function copyDID() {
+		if (UserDID) {
+			try {
+				await navigator.clipboard.writeText(UserDID)
+				setDidCopied(true)
+				console.log("DID copied to clipboard")
+
+				setTimeout(() => {
+					setDidCopied(false)
+				}, 3000)
+			} catch (err) {
+				console.log("Failed to copy DID: " + err)
+			}
+		}
 	}
 
 	return (
 		<div className={s.home}>
+			<h1 className={s.i_heading}>Digital Dream Creators</h1>
 			<form
 				className={s.form}
 				onSubmit={(e) => {
 					e.preventDefault()
-					handleSubmit()
+					{
+						signUpState ? handleSignIn() : handleLogin()
+					}
 				}}
 			>
 				<div className={s.heading}>
-					<h3>Project Information</h3>
+					<div className={s.try_option}>
+						<h3
+							onClick={() => {
+								setSignUpState((prev) => !prev)
+							}}
+						>
+							{signUpState ? "Sign Up" : "Log in"}
+						</h3>
+						<span
+							onClick={() => {
+								setSignUpState((prev) => !prev)
+							}}
+						>
+							{signUpState ? "Log in" : "Sign Up"}
+						</span>
+					</div>
 					<div className={s.sep} />
 				</div>
 
 				<div className={s.input_grp}>
-					<label htmlFor="u_did">User DID</label>
+					<label htmlFor="u_did">Username</label>
 					<input
 						name={"u_did"}
 						type="text"
 						className={s.input}
-						placeholder={"example: did:ion:EIA-249..."}
+						placeholder={"example: ramone54"}
 						onChange={(e) => {
-							setUserDID(e.target.value)
+							setUserName(e.target.value)
 						}}
-						value={UserDID}
+						value={UserName}
 					/>
 				</div>
 
 				<div className={s.input_grp}>
-					<label htmlFor="p_name">Project Name</label>
-					<input
-						name={"p_name"}
-						type="text"
-						className={s.input}
-						placeholder={"example: Mohr's Collection"}
-						onChange={(e) => {
-							setPName(e.target.value)
-						}}
-						value={PName}
-					/>
-				</div>
-
-				<div className={s.input_grp}>
-					<label htmlFor="p_tagl">Project Tagline</label>
-					<input
-						name={"p_tagl"}
-						type="text"
-						className={s.input}
-						placeholder={"example: A collection of my latest work"}
-						onChange={(e) => {
-							setPTagL(e.target.value)
-						}}
-						value={PTagL}
-					/>
-				</div>
-
-				<div className={s.input_grp}>
-					<label htmlFor="a_qty">Art Quantity</label>
-					<input
-						name={"a_qty"}
-						type="number"
-						className={s.input_no}
-						onChange={(e) => {
-							setAQty(e.target.value)
-						}}
-						value={AQty}
-					/>
-				</div>
-
-				<div className={s.img_inpt_grp} id="pi_upld">
-					<p>Project Cover Image</p>
-
-					<div className={s.img_upl_wrp}>
-						<input
-							type="file"
-							id="pc-img"
-							hidden
-							onChange={(e) => {
-								handleImgChange(e)
-							}}
-							required
-						/>
-						<label htmlFor="pc-img" className={s.pc_img_lbl}>
-							<div className={s.pc_img_wrp}>
-								{pCover ? (
-									<img src={pCover} alt="--" className={s.pc_img} />
-								) : (
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth="1.5"
-										stroke="currentColor"
-										className={s.upl_icon}
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-										/>
-									</svg>
-								)}
+					<label htmlFor="u_did">DID</label>
+					{signUpState ? (
+						<div className={s.input_did}>
+							<div className={s.did_wrp}>
+								{UserDID ? UserDID : "Your DID will be revealed here..."}
 							</div>
-						</label>
-					</div>
-				</div>
-
-				<div className={s.tiers}>
-					{tiers.map((tier, idx) => {
-						return (
-							<div className={s.tier_wrp} key={idx}>
-								<div className={s.tier}>
-									<h4 className={s.tier_name}>{tier.name}</h4>
-									<p>{`Images: ${tier.artWorks.length} files selected`}</p>
-									<p>Authorized Viewers</p>
-									<ul className={s.a_viewers}>
-										{tier.aViewers.map((aviewer, iidx) => {
-											return <li key={iidx}>{cutStr(aviewer, 9)}</li>
-										})}
-									</ul>
-								</div>
-
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									strokeWidth="1.5"
-									stroke="currentColor"
-									className={s.x_for_list}
-									onClick={() => {
-										tiers.splice(idx, 1)
-										setTiers((prev) => [...tiers])
-									}}
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-									/>
-								</svg>
-							</div>
-						)
-					})}
-				</div>
-
-				{tierAdder && (
-					<div className={s.tier_form}>
-						<div className={s.input_grp}>
-							<label htmlFor="ti_name">Tier Name</label>
-							<input
-								name={"ti_name"}
-								type="text"
-								className={s.input}
-								placeholder={"example: Tier 1"}
-								onChange={(e) => {
-									setCurrTierName(e.target.value)
-								}}
-								value={currTierName}
-							/>
-						</div>
-
-						<div className={s.input_grp}>
-							<label htmlFor="tier_img">Images</label>
-							<input
-								name={"tier_img"}
-								type="file"
-								multiple
-								accept={"image/png, image/jpg, image/svg, image/jpeg"}
-								className={s.input}
-								onChange={(e) => {
-									setArts(e.target.files)
-								}}
-								// placeholder={"example: Tier 1"}
-							/>
-						</div>
-
-						<div className={s.input_grp}>
-							<label htmlFor="a_viewers">Authorized Viewers</label>
-							<div className={s.input_for_list}>
-								<input
-									name={"a_viewers"}
-									type="text"
-									className={s.input}
-									placeholder={"example: did:ion:EA33-Ip..."}
-									onChange={(e) => {
-										setCurrAViewer(e.target.value)
-									}}
-									value={currAViewer}
-								/>
-
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									strokeWidth="1.5"
-									stroke="currentColor"
-									className={s.add_icon}
-									onClick={() => {
-										setCAViewers((prev) => [...prev, currAViewer])
-										setCurrAViewer("")
-									}}
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-									/>
-								</svg>
-							</div>
-
-							<ul className={s.viewer_list}>
-								{modArr().map((viewer, idx) => {
-									return (
-										<div className={s.viewer_grp} key={idx}>
-											<li className={s.viewer}>{cutStr(viewer, 8)}</li>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 24 24"
-												strokeWidth="1.5"
-												stroke="currentColor"
-												className={s.x_for_list}
-												onClick={() => {
-													CAViewers.splice(idx, 1)
-													setCAViewers((prev) => [...CAViewers])
-												}}
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-												/>
-											</svg>
-										</div>
-									)
-								})}
-							</ul>
-						</div>
-
-						<div className={s.add_tier_btn}>
-							<div
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								strokeWidth="1.5"
+								stroke="currentColor"
+								className={s.clip_icon}
 								onClick={() => {
-									addTier()
-									setCurrTierName("")
-									setArts([])
-									setCAViewers([])
-									setTierAdder(false)
+									copyDID()
 								}}
 							>
-								Add tier
-							</div>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
+								/>
+							</svg>
 						</div>
-					</div>
-				)}
-
-				<div className={s.tier_adder}>
-					<p>Add a tier</p>
-					<div
-						className={s.tier_adder_btn}
-						onClick={() => {
-							setTierAdder(true)
-						}}
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							strokeWidth="1.5"
-							stroke="currentColor"
-							className={s.add_icon}
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-							/>
-						</svg>
-					</div>
+					) : (
+						<input
+							name={"u_did"}
+							type="text"
+							className={s.input}
+							placeholder={"example: did:ion:EIA-249..."}
+							onChange={(e) => {
+								setLSUserDID(e.target.value)
+							}}
+							value={LSUserDID}
+						/>
+					)}
 				</div>
 
-				<button className={s.submit_btn} type={"submit"}>
-					Submit Project
-				</button>
+				{signUpState ? (
+					!UserDID ? (
+						<button type={"submit"} className={s.sign_in_btn}>
+							Sign up
+						</button>
+					) : (
+						<a href="/submit">
+							<button type={"button"} className={s.sign_in_btn}>
+								Submit a Project
+							</button>
+						</a>
+					)
+				) : (
+					<button type={"submit"} className={s.sign_in_btn}>
+						Login
+					</button>
+				)}
 			</form>
 		</div>
 	)

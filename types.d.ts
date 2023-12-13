@@ -14,7 +14,7 @@ export interface tier {
 	artWorks: string[]
 	projectName: string
 	projectImage: string
-	projectCreatorDID: string
+	projectCreatorUsername: string
 }
 
 export interface user {
