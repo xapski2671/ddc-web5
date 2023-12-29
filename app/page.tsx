@@ -20,7 +20,7 @@ export default function SignIn() {
 		}
 
 		const res = await axios.post(
-			"http://51.20.130.26:5001/web5/signable",
+			"https://ddc-museum.onrender.com/web5/signable",
 			JSON.stringify(query),
 			{
 				headers: {
@@ -33,7 +33,7 @@ export default function SignIn() {
 		if (res.data.success) {
 			setSignable(true)
 			const ressu = await axios.post(
-				"http://51.20.130.26:5001/web5/sign-user",
+				"https://ddc-museum.onrender.com/web5/sign-user",
 				JSON.stringify(query),
 				{
 					headers: {
@@ -58,7 +58,7 @@ export default function SignIn() {
 		}
 
 		const ressu = await axios.post(
-			"http://51.20.130.26:5001/web5/login",
+			"https://ddc-museum.onrender.com/web5/login",
 			JSON.stringify(query),
 			{
 				headers: {
