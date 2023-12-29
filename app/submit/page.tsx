@@ -94,7 +94,7 @@ export default function Home() {
 
 		// console.log(grandProject)
 		const res = await axios.post(
-			"http://51.20.130.26:5001/data",
+			"https://ddc-museum.onrender.com/data",
 			JSON.stringify(grandProject),
 			{
 				headers: {
@@ -103,7 +103,7 @@ export default function Home() {
 			}
 		)
 		res.data.status == 200 && setSubmitted(true)
-		console.log(res)
+		console.log(res.data.status)
 	}
 
 	return (
